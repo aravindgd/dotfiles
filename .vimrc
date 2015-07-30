@@ -1,6 +1,7 @@
 set nocompatible              " be iMpr"
-set rtp+=~/.vim/bundle/vundle/
-call vundle#rc()
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+
 set backspace=indent,eol,start
 set noswapfile
 set number
@@ -23,7 +24,7 @@ autocmd VimEnter * NERDTree
 autocmd VimEnter * NERDTreeTabsOpen
 autocmd VimEnter * NERDTreeMirror
 autocmd VimEnter * wincmd p
-set tabstop=2 shiftwidth=2 softtabstop=2
+set tabstop=2 shiftwidth=2 softtabstop=2 expandtab
 set title
 au BufNewFile,BufRead *.erb set filetype=eruby.html
 au BufNewFile,BufRead *.es6 set filetype=javascript
@@ -105,6 +106,7 @@ autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
 autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
 autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
 autocmd BufNewFile,BufRead *.coffee set filetype=coffee
+autocmd BufNewFile,BufRead *.slim set filetype=slim.html
 
 " Enable heavy omni completion.
 if !exists('g:neocomplete#sources#omni#input_patterns')
@@ -112,8 +114,6 @@ if !exists('g:neocomplete#sources#omni#input_patterns')
 endif
 let g:neocomplete#sources#omni#input_patterns.perl = '\h\w*->\h\w*\|\h\w*::'
 let g:neocomplete#force_overwrite_completefunc = 1
-
-
 
 
 "For ruby programming
@@ -158,8 +158,14 @@ Bundle 'scrooloose/nerdtree'
 Bundle 'jistr/vim-nerdtree-tabs'
 Bundle 'Raimondi/delimitMate'
 
+"vim ctrlp
+Bundle 'kien/ctrlp.vim'
+set wildignore+=*/tmp/*,*.so,*.swp,*.zip,*.log,*.sql     " MacOSX/Linux"
 
 Bundle 'ap/vim-css-color'
+
+" Ag search
+Bundle 'rking/ag.vim'
 
 " Colors to vim
 Bundle 'chriskempson/base16-vim'
@@ -171,21 +177,31 @@ Bundle 'tpope/vim-repeat'
 Bundle 'dsawardekar/ember.vim'
 Bundle 'mustache/vim-mustache-handlebars'
 Bundle 'kchmck/vim-coffee-script'
-" Git repos on your local machine (i.e. when working on your own plugin)
-" ...
-"Bundle 'jistr/vim-nerdtree-tabs'"
-"
-colorscheme solarized
-set background=dark
-let g:solarized_termtrans=1
-let g:solarized_termcolors=16
-let g:solarized_contrast="normal"
-let g:solarized_visibility="normal"
+Bundle 'elixir-lang/vim-elixir'
+Bundle 'slim-template/vim-slim'
+Bundle 'vim-scripts/vim-auto-save'
+let g:auto_save = 1  " enable AutoSave on Vim startup
+let g:auto_save_no_updatetime = 1  " do not change the 'updatetime' option
+let g:auto_save_in_insert_mode = 0  " do not save while in insert mode
+
+"auto reload vimrc when saved
+augroup reload_vimrc " {
+	autocmd!
+	autocmd BufWritePost $MYVIMRC source $MYVIMRC
+augroup END " }"
+
+call vundle#end()            " required
 syntax on
 filetype plugin indent on     " required!
+colorscheme Monokai
 vmap <C-c> "+y
 vmap <C-x> dd
 nmap <C-a> ggVG
+" This is for inserting space after comma
+autocmd BufNewFile,BufRead *.slim inoremap , ,<space>
+autocmd BufNewFile,BufRead *.erb inoremap , ,<space>
+autocmd BufNewFile,BufRead *.rb inoremap , ,<space>
+autocmd BufNewFile,BufRead *.coffee inoremap , ,<space>
 "
 " Brief help
 " :BundleList          - list configured bundles
@@ -196,4 +212,3 @@ nmap <C-a> ggVG
 " see :h vundle for more details or wiki for FAQ
 " NOTE: comments after Bundle commands are not allowed.
 syntax enable
-
