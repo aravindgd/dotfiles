@@ -76,15 +76,22 @@ source $ZSH/oh-my-zsh.sh
 export MySQL_Dev_Username="root"
 export MySQL_Dev_Password="root"
 export EDITOR='subl -w'
+export AWS_ACCESS_KEY_ID="AKIAIKKTXC7FDKYPPYJA"
+export AWS_SECRET_KEY="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"
+export AWS_REGION="us-east-1"
+export AWS_S3_BUCKET="list-app"
 # Set personal aliases, overriding those provided by oh-my-zsh libs,
 # plugins, and themes. Aliases can be placed here, though oh-my-zsh
 # users are encouraged to define aliases within the ZSH_CUSTOM folder.
 # For a full list of active aliases, run `alias`.
 #
 # Example aliases
-source /sw/bin/init.sh
 alias zshrc="vim ~/.zshrc"
 alias vimrc="vim ~/.vimrc"
 alias mysqlstart="/usr/local/Cellar/mysql/5.6.25/support-files/mysql.server start"
 alias mysqlstop="/usr/local/Cellar/mysql/5.6.25/support-files/mysql.server stop"
+alias postgresstart='postgres -D /usr/local/var/postgres'
 # alias ohmyzsh="mate ~/.oh-my-zsh"
+alias sshloomio="ssh deploy@128.199.192.116"
+alias dokku='ssh -t dokku@loomio.fsftn.org'
+alias s3dbsync='ssh -i ~/.ssh/s3-sync.pem ec2-user@52.3.26.153'

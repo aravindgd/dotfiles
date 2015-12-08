@@ -1,11 +1,10 @@
 set nocompatible              " be iMpr"
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
-
 set backspace=indent,eol,start
 set noswapfile
 set number
-set scrolloff=5 
+set scrolloff=5
 set mouse=a
 set history=1000
 set autoindent
@@ -17,22 +16,16 @@ set wildmenu
 set wildmode=list:longest
 set autoread
 set ttyfast " u got a fast terminal
+set synmaxcol=250
 set ttyscroll=3
 set lazyredraw " to avoid scrolling problems
-set synmaxcol=300
-autocmd VimEnter * NERDTree
-autocmd VimEnter * NERDTreeTabsOpen
-autocmd VimEnter * NERDTreeMirror
-autocmd VimEnter * wincmd p
 set tabstop=2 shiftwidth=2 softtabstop=2 expandtab
 set title
 au BufNewFile,BufRead *.erb set filetype=eruby.html
 au BufNewFile,BufRead *.es6 set filetype=javascript
 
-let g:nerdtree_tabs_no_startup_for_diff=1
-let g:nerdtree_tabs_open_on_console_startup=1
-let g:nerdtree_tabs_smart_startup_focus=1
-let g:nerdtree_tabs_synchronize_view=1
+"remove trailing whitespace
+autocmd FileType c,cpp,java,php,ruby,eruby.html,javascript,coffee,rake autocmd BufWritePre <buffer> :%s/\s\+$//e
 
 "Vim neocomplete setting start here
 
@@ -120,7 +113,7 @@ let g:neocomplete#force_overwrite_completefunc = 1
 Bundle 'vim-ruby/vim-ruby'
 Bundle 'Keithbsmiley/rspec.vim'
 " let Vundle manage Vundle
-" required! 
+" required!
 Bundle 'gmarik/vundle'
 Bundle 'tpope/vim-haml'
 Bundle 'bling/vim-airline'
@@ -142,7 +135,6 @@ Bundle 'tpope/vim-rake.git'
 Bundle 'tpope/vim-surround.git'
 Bundle 'tpope/vim-bundler'
 Bundle 'scrooloose/syntastic'
-Bundle 'mhinz/vim-startify'
 Bundle 'othree/html5.vim'
 Bundle 'Yggdroot/indentLine'
 Bundle 'tpope/vim-commentary'
@@ -180,9 +172,12 @@ Bundle 'kchmck/vim-coffee-script'
 Bundle 'elixir-lang/vim-elixir'
 Bundle 'slim-template/vim-slim'
 Bundle 'vim-scripts/vim-auto-save'
+Bundle 'rorymckinley/vim-symbols-strings'
 let g:auto_save = 1  " enable AutoSave on Vim startup
 let g:auto_save_no_updatetime = 1  " do not change the 'updatetime' option
 let g:auto_save_in_insert_mode = 0  " do not save while in insert mode
+
+Bundle 'dyng/ctrlsf.vim'
 
 "auto reload vimrc when saved
 augroup reload_vimrc " {
@@ -201,7 +196,29 @@ nmap <C-a> ggVG
 autocmd BufNewFile,BufRead *.slim inoremap , ,<space>
 autocmd BufNewFile,BufRead *.erb inoremap , ,<space>
 autocmd BufNewFile,BufRead *.rb inoremap , ,<space>
+autocmd BufNewFile,BufRead *.rake inoremap , ,<space>
 autocmd BufNewFile,BufRead *.coffee inoremap , ,<space>
+
+" Plugin key-mappings.
+imap <C-k>     <Plug>(neosnippet_expand_or_jump)
+smap <C-k>     <Plug>(neosnippet_expand_or_jump)
+xmap <C-k>     <Plug>(neosnippet_expand_target)
+
+" SuperTab like snippets behavior.
+imap <expr><TAB> neosnippet#expandable_or_jumpable() ?
+      \ "\<Plug>(neosnippet_expand_or_jump)"
+      \: pumvisible() ? "\<C-n>" : "\<TAB>"
+smap <expr><TAB> neosnippet#expandable_or_jumpable() ?
+      \ "\<Plug>(neosnippet_expand_or_jump)"
+      \: "\<TAB>"
+
+" For conceal markers.
+if has('conceal')
+  set conceallevel=2 concealcursor=niv
+endif
+"vim-airline works without nerdtree
+set laststatus=2
+
 "
 " Brief help
 " :BundleList          - list configured bundles
