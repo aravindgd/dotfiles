@@ -18,10 +18,15 @@ if dein#load_state(dein_path)
   call dein#add('tpope/vim-surround')  " Vim bracket/parentheses wrapping
   call dein#add('w0rp/ale')  " linter
   call dein#add('junegunn/fzf', { 'build': './install --all', 'merged': 0 })
-  call dein#add('junegunn/fzf.vim', { 'depends': '/usr/local/bin/fzf' })
+  call dein#add('junegunn/fzf.vim', { 'depends': 'fzf' })
   call dein#add('907th/vim-auto-save')
-  call dein#add('scrooloose/nerdcommenter')
+  call dein#add('tpope/vim-commentary')
   call dein#add('mileszs/ack.vim')
+  call dein#add('AndrewRadev/vim-eco')
+  call dein#add('kchmck/vim-coffee-script')
+  call dein#add('mattn/emmet-vim')
+  call dein#add('tpope/vim-fugitive')
+  call dein#add('tpope/vim-rhubarb')
 
 	" Required:
 	call dein#end()
@@ -82,6 +87,16 @@ nnoremap <C-d> x
 nnoremap <leader>r :
 " }}}
 
+"remove trailing whitespace
+autocmd FileType c,cpp,java,php,ruby,eruby.html,javascript,coffee,rake autocmd BufWritePre <buffer> :%s/\s\+$//e
+
+" This is for inserting space after comma
+autocmd BufNewFile,BufRead *.slim inoremap , ,<space>
+autocmd BufNewFile,BufRead *.erb inoremap , ,<space>
+autocmd BufNewFile,BufRead *.rb inoremap , ,<space>
+autocmd BufNewFile,BufRead *.rake inoremap , ,<space>
+autocmd BufNewFile,BufRead *.coffee inoremap , ,<space>
+
 " deoplete
 let g:deoplete#enable_at_startup = 1
 
@@ -128,4 +143,5 @@ let g:auto_save = 1   " enable autosave on Vim Startup
 " ack config
 let g:ackprg = 'ag --nogroup --nocolor --column'
 
-set autoread " trigger filetype checking
+set autoread " trigger filetype checking  
+au CursorHold * checktime  
