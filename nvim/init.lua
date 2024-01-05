@@ -4,6 +4,12 @@
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
+-- Intendation setting
+vim.o.tabstop = 2
+vim.o.shiftwidth = 2
+vim.o.expandtab = true
+vim.bo.softtabstop = 2
+
 -- Install package manager
 --    https://github.com/folke/lazy.nvim
 --    `:help lazy.nvim.txt` for more info
@@ -52,12 +58,80 @@ require('lazy').setup({
       'williamboman/mason-lspconfig.nvim',
 
       -- Useful status updates for LSP
+      -- TODO: SET TO LEGACY, check later to see if it can be fixed
       -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
-      { 'j-hui/fidget.nvim', opts = {} },
+      {
+        'j-hui/fidget.nvim',
+        tag = "legacy",
+        event = "LspAttach",
+        opts = {}
+      },
 
       -- Additional lua configuration, makes nvim stuff amazing!
       'folke/neodev.nvim',
     },
+  },
+
+  -- for formatters and linters
+  {
+    "mfussenegger/nvim-lint",
+    event = { "BufReadPost", "BufWritePost" },
+    config = function()
+      local lint = require("lint")
+
+      local severity_map = {
+        ["fatal"] = vim.diagnostic.severity.ERROR,
+        ["error"] = vim.diagnostic.severity.ERROR,
+        ["warning"] = vim.diagnostic.severity.WARN,
+        ["convention"] = vim.diagnostic.severity.HINT,
+        ["refactor"] = vim.diagnostic.severity.INFO,
+        ["info"] = vim.diagnostic.severity.INFO,
+      }
+
+      lint.linters["haml-lint"] = {
+        cmd = "bundle",
+        stdin = false,
+        ignore_exitcode = true,
+        args = { "exec", "haml-lint", "--reporter", "json" },
+        parser = function(output)
+          local diagnostics = {}
+          local decoded = vim.json.decode(output)
+
+          if not decoded or not decoded.files or not decoded.files[1] then
+            return diagnostics
+          end
+
+          local offences = decoded.files[1].offenses
+
+          for _, off in pairs(offences) do
+            table.insert(diagnostics, {
+              source = "haml-lint",
+              lnum = off.location.line - 1,
+              col = 0,
+              end_lnum = off.location.line - 1,
+              end_col = 0,
+              severity = severity_map[off.severity],
+              message = off.message,
+              code = off.linter_name,
+            })
+          end
+
+          return diagnostics
+        end,
+      }
+
+      lint.linters_by_ft = {
+        sh = { "shellcheck" },
+        bash = { "shellcheck" },
+        haml = { "haml-lint" },
+      }
+      vim.api.nvim_create_autocmd({ "BufReadPost", "BufWritePost" }, {
+        group = vim.api.nvim_create_augroup("AutoLint", {}),
+        callback = function()
+          require("lint").try_lint()
+        end,
+      })
+    end,
   },
 
   { -- Autocompletion
@@ -106,7 +180,20 @@ require('lazy').setup({
   },
 
   -- Fuzzy Finder (files, lsp, etc)
-  { 'nvim-telescope/telescope.nvim', version = '*', dependencies = { 'nvim-lua/plenary.nvim' } },
+  {
+    'nvim-telescope/telescope.nvim', version = '*',
+    dependencies = {
+      { 'nvim-lua/plenary.nvim' },
+      { 'nvim-telescope/telescope-live-grep-args.nvim' },
+    },
+  },
+
+  {
+    'nvim-telescope/telescope-smart-history.nvim',
+    dependencies = {
+      { "tami5/sqlite.lua" }
+    },
+  },
 
   -- Fuzzy Finder Algorithm which requires local dependencies to be built.
   {
@@ -132,6 +219,12 @@ require('lazy').setup({
     "nvim-treesitter/nvim-treesitter-context",
     event = "BufReadPost",
     config = true,
+  },
+
+  {
+    'nvim-treesitter-refactor',
+    _ = {},
+    name = 'nvim-treesitter-refactor'
   },
 
   {
@@ -178,8 +271,21 @@ require('lazy').setup({
       char = '┊',
       show_trailing_blankline_indent = false,
     },
+  },
+
+  {
+    "klen/nvim-test",
   }
+
 })
+
+require('nvim-test').setup {
+  runners = { -- setup tests runners
+    javascriptreact = "nvim-test.runners.jest",
+    javascript = "nvim-test.runners.jest",
+    ruby = "nvim-test.runners.rspec",
+  }
+}
 
 require('Comment').setup()
 
@@ -213,6 +319,18 @@ vim.o.foldenable = true
 vim.keymap.set('n', 'zR', require('ufo').openAllFolds)
 vim.keymap.set('n', 'zM', require('ufo').closeAllFolds)
 
+-- Define a function to copy the current file path to the system clipboard
+function copy_current_file_path()
+    local file_path = vim.fn.expand("%:p")
+    local line_number = vim.fn.line('.')
+    local full_result = file_path .. ":" .. line_number
+    vim.fn.setreg('+', full_result)
+    print('File path copied to clipboard: ' .. full_result)
+end
+
+-- Map the function to a key (e.g., <leader>y)
+vim.keymap.set('n', '<leader>y', '<cmd>lua copy_current_file_path()<CR>', { noremap = true, silent = true, desc = 'Cop[y] current buffer path' })
+
 -- Save undo history
 vim.o.undofile = true
 
@@ -231,21 +349,35 @@ vim.o.termguicolors = true
 
 vim.cmd('colorscheme tokyonight-moon')
 
+-- Custom vim-surrond mappings
+-- See `:help vim-surround`
+-- Convert string to symbol in Ruby
+-- vim.api.nvim_create_autocmd( "FileType", {
+--   pattern = "ruby",
+--   callback = 'let b:surround_45 = ":"',
+-- })
+
 -- [[ Configure Telescope ]]
 -- See `:help telescope` and `:help telescope.setup()`
 require('telescope').setup {
   defaults = {
+    history = {
+      path = '~/.local/share/nvim/databases/telescope_history.sqlite3',
+      limit = 100,
+    },
     mappings = {
       i = {
-        ['<C-u>'] = false,
-        ['<C-d>'] = false,
+        ["<C-u>"] = require('telescope.actions').cycle_history_next,
+        ["<C-d>"] = require('telescope.actions').cycle_history_prev,
       },
     },
   },
 }
 
 -- Enable telescope fzf native, if installed
-pcall(require('telescope').load_extension, 'fzf')
+require('telescope').load_extension('fzf')
+-- Remember search history
+require('telescope').load_extension('smart_history')
 
 -- See `:help telescope.builtin`
 vim.keymap.set('n', '<leader>?', require('telescope.builtin').oldfiles, { desc = '[?] Find recently opened files' })
@@ -258,10 +390,13 @@ vim.keymap.set('n', '<leader>/', function()
   })
 end, { desc = '[/] Fuzzily search in current buffer' })
 
+vim.keymap.set('n', '<leader>t', ':NeoTreeReveal<CR>', { desc = 'Toggle File [T]ree' })
+
 vim.keymap.set('n', '<leader>sf', require('telescope.builtin').find_files, { desc = '[S]earch [F]iles' })
 vim.keymap.set('n', '<leader>sh', require('telescope.builtin').help_tags, { desc = '[S]earch [H]elp' })
 vim.keymap.set('n', '<leader>sw', require('telescope.builtin').grep_string, { desc = '[S]earch current [W]ord' })
-vim.keymap.set('n', '<leader>sg', require('telescope.builtin').live_grep, { desc = '[S]earch by [G]rep' })
+vim.keymap.set("n", "<leader>sgf", ":lua require('telescope').extensions.live_grep_args.live_grep_args()<CR>", { desc = '[S]earch by [G]rep by [F]ile' })
+vim.keymap.set("n", "<leader>sg", require('telescope.builtin').live_grep, { desc = '[S]earch by [G]rep' })
 vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { desc = '[S]earch [D]iagnostics' })
 
 
@@ -328,13 +463,23 @@ local servers = {
   -- pyright = {},
   -- rust_analyzer = {},
   -- tsserver = {},
-  standardrb = {}, 
   lua_ls = {
     Lua = {
       workspace = { checkThirdParty = false },
       telemetry = { enable = false },
     },
-  }
+  },
+  rubocop = { mason = false },
+  solargraph = {
+    init_options = {
+      formatting = false,
+    },
+    settings = {
+      solargraph = {
+        diagnostics = false,
+      },
+    },
+  },
 }
 
 -- Setup neovim lua configuration
@@ -347,7 +492,7 @@ require('nvim-treesitter.configs').setup {
   ensure_installed = {
     "c",
     "lua",
-    "help",
+    "vimdoc",
     "vim",
     "ruby",
     "sql",
@@ -365,6 +510,16 @@ require('nvim-treesitter.configs').setup {
 
   -- Autoinstall languages that are not installed. Defaults to false (but you can change for yourself!)
   auto_install = false,
+
+  refactor = {
+    smart_rename = {
+      enable = true,
+      -- Assign keymaps to false to disable them, e.g. `smart_rename = false`.
+      keymaps = {
+        smart_rename = "grr",
+      },
+    },
+  },
 
   highlight = { enable = true },
   indent = { enable = true, disable = { 'python' } },
@@ -450,6 +605,7 @@ mason_lspconfig.setup_handlers {
   end,
 }
 
+
 require('ufo').setup()
 
 -- nvim-cmp setup
@@ -507,9 +663,3 @@ cmp.setup {
     },
   },
 }
-
--- Intendation setting
-vim.o.tabstop = 2
-vim.o.shiftwidth = 2
-vim.o.expandtab = true
-vim.bo.softtabstop = 2
