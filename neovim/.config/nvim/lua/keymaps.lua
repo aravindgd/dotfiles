@@ -54,4 +54,7 @@ vim.keymap.set('n', '<leader>y', '<cmd>lua Copy_current_file_path()<CR>', { nore
 -- Map the function to a key (e.g., <leader>yl)
 vim.keymap.set('n', '<leader>yl', '<cmd>lua Copy_current_file_path_with_line_number()<CR>', { noremap = true, silent = true, desc = 'Cop[y] current buffer path with [l]ine number -> filename:linenumber' })
 
+
+-- neo-tree keymap
+vim.keymap.set('n', '<leader>t', ':Neotree reveal<CR>', { desc = 'Toggle File [T]ree' })
 -- vim: ts=2 sts=2 sw=2 et
