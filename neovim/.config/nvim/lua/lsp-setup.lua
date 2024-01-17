@@ -126,15 +126,21 @@ require('mason-lspconfig').setup()
 --  If you want to override the default filetypes that your language server will attach to you can
 --  define the property 'filetypes' to the map in question.
 local servers = {
-  ruby_ls = {},
-  solargraph = {
+  ruby_ls = {
+    cmd = { "bundle", "exec", "ruby-lsp" },
     init_options = {
-      formatting = false,
+      formatter = "auto",
     },
-    solargraph = {
-      diagnostics = false,
-    },
+    settings = {},
   },
+  -- solargraph = {
+  --   init_options = {
+  --     formatting = false,
+  --   },
+  --   solargraph = {
+  --     diagnostics = false,
+  --   },
+  -- },
   lua_ls = {
     Lua = {
       workspace = { checkThirdParty = false },
