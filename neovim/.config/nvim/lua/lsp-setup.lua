@@ -134,14 +134,14 @@ local servers = {
     },
     settings = {},
   },
-  -- solargraph = {
-  --   init_options = {
-  --     formatting = false,
-  --   },
-  --   solargraph = {
-  --     diagnostics = false,
-  --   },
-  -- },
+  solargraph = {
+    init_options = {
+      formatting = false,
+    },
+    solargraph = {
+      diagnostics = false,
+    },
+  },
   lua_ls = {
     Lua = {
       workspace = { checkThirdParty = false },
