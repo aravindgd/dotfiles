@@ -142,6 +142,7 @@ local servers = {
       diagnostics = false,
     },
   },
+  astro = {},
   lua_ls = {
     Lua = {
       workspace = { checkThirdParty = false },
