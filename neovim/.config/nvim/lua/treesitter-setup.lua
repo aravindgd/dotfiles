@@ -20,7 +20,6 @@ vim.defer_fn(function()
       "yaml",
       "json",
       "graphql",
-      "astro"
     },
 
     ignore_install = {},
