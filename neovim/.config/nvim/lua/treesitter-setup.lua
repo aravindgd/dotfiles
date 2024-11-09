@@ -23,6 +23,8 @@ vim.defer_fn(function()
       "yaml",
       "json",
       "graphql",
+      "markdown",
+      "markdown_inline"
     },
 
     ignore_install = {},
