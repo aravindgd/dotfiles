@@ -4,7 +4,10 @@ return {
 		'nvim-treesitter/nvim-treesitter',
 		dependencies = {
 			'nvim-treesitter/nvim-treesitter-textobjects',
+      'nvim-treesitter/nvim-treesitter-context'
 		},
-		build = ':TSUpdate',
+    build = function()
+        require("nvim-treesitter.install").update({ with_sync = true })()
+    end
 	}
 }
