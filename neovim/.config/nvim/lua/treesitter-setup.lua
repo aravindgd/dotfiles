@@ -23,6 +23,7 @@ vim.defer_fn(function()
       "yaml",
       "json",
       "graphql",
+      "typst",
       "markdown",
       "markdown_inline"
     },
