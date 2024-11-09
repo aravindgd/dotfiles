@@ -48,7 +48,12 @@ vim.g.maplocalleader = ' '
 require 'lazy-bootstrap'
 
 -- [[ Configure plugins ]]
-require("lazy").setup("plugins")
+require("lazy").setup({
+  spec = {
+    -- import your plugins
+    { import = "plugins" },
+  }
+})
 
 -- [[ Setting options ]]
 require 'options'
