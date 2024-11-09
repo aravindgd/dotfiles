@@ -25,13 +25,22 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   pattern = '*',
 })
 
-local function current_file_path()
-  return vim.fn.expand("%:p")
+local function current_file_full_path()
+  return vim.fn.expand("%:p:.")
+end
+
+-- Define a function to copy the current file name to the system clipboard
+function Copy_current_file_name()
+  local file_name = vim.fn.expand("%:t")
+
+  print('Copied: ' .. file_name)
+
+  vim.fn.setreg('+', file_name)
 end
 
 -- Define a function to copy the current file path to the system clipboard
-function Copy_current_file_path()
-  local file_path = current_file_path()
+function Copy_current_file_full_path()
+  local file_path = current_file_full_path()
 
   print('Copied: ' .. file_path)
 
@@ -39,20 +48,19 @@ function Copy_current_file_path()
 end
 
 -- Define a function to copy the current file path with the current line number to the system clipboard
-function Copy_current_file_path_with_line_number()
+function Copy_current_file_full_path_with_line_number()
   local line_number = vim.fn.line('.')
-  local full_result = current_file_path() .. ":" .. line_number
+  local full_result = current_file_full_path() .. ":" .. line_number
 
   print('Copied: ' .. full_result)
 
   vim.fn.setreg('+', full_result)
 end
 
--- Map the function to a key (e.g., <leader>y)
-vim.keymap.set('n', '<leader>y', '<cmd>lua Copy_current_file_path()<CR>', { noremap = true, silent = true, desc = 'Cop[y] current buffer path' })
 
--- Map the function to a key (e.g., <leader>yl)
-vim.keymap.set('n', '<leader>yl', '<cmd>lua Copy_current_file_path_with_line_number()<CR>', { noremap = true, silent = true, desc = 'Cop[y] current buffer path with [l]ine number -> filename:linenumber' })
+vim.keymap.set('n', '<leader>y', '<cmd>lua Copy_current_file_full_path()<CR>', { noremap = true, silent = true, desc = 'Cop[y] current file full path' })
+vim.keymap.set('n', '<leader>yl', '<cmd>lua Copy_current_file_full_path_with_line_number()<CR>', { noremap = true, silent = true, desc = 'Cop[y] current file full path with [l]ine number -> filename:linenumber' })
+vim.keymap.set('n', '<leader>yy', '<cmd>lua Copy_current_file_name()<CR>', { noremap = true, silent = true, desc = 'Cop[[y]] current file name' })
 
 
 -- neo-tree keymap
