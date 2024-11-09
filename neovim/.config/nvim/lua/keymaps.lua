@@ -62,6 +62,9 @@ vim.keymap.set('n', '<leader>y', '<cmd>lua Copy_current_file_full_path()<CR>', {
 vim.keymap.set('n', '<leader>yl', '<cmd>lua Copy_current_file_full_path_with_line_number()<CR>', { noremap = true, silent = true, desc = 'Cop[y] current file full path with [l]ine number -> filename:linenumber' })
 vim.keymap.set('n', '<leader>yy', '<cmd>lua Copy_current_file_name()<CR>', { noremap = true, silent = true, desc = 'Cop[[y]] current file name' })
 
+-- Open find and replace on current word
+vim.keymap.set('n', '<leader>fr', ':%s/\\<<C-r><C-w>\\>/', { noremap = true, silent = true, desc = '[f]ind and [r]eplace' })
+
 -- neo-tree keymap
 vim.keymap.set('n', '<leader>t', ':Neotree reveal<CR>', { desc = 'Toggle File [T]ree' })
 
