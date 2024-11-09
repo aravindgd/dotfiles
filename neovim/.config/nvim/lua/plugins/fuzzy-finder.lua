@@ -6,7 +6,7 @@ return {
     dependencies = {
       'nvim-lua/plenary.nvim',
       -- fuzzy finder algorithm
-      'BurntSushi/ripgrep',
+      { 'nvim-telescope/telescope-fzf-native.nvim', build = 'make' },
       -- It enables passing arguments to the grep command, useful for searching by a particular folder
       { 'nvim-telescope/telescope-live-grep-args.nvim' },
 
