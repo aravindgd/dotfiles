@@ -1,4 +1,3 @@
--- local lsp_config = require('lspconfig')
 -- [[ Configure LSP ]]
 
 -- ONLY FOR ruby_lsp
@@ -112,41 +111,6 @@ require('which-key').add({
 require('mason').setup()
 require('mason-lspconfig').setup()
 
--- Enable the following language servers
---  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
---
---  Add any additional override configuration in the following tables. They will be passed to
---  the `settings` field of the server config. You must look up that documentation yourself.
---
---  If you want to override the default filetypes that your language server will attach to you can
---  define the property 'filetypes' to the map in question.
-local servers = {
-  tinymist = {},
-  ruby_lsp = {
-    cmd = { "bundle", "exec", "ruby-lsp" },
-    init_options = {
-      formatter = "auto",
-    },
-    settings = {},
-  },
-  solargraph = {
-    init_options = {
-      formatting = false,
-    },
-    solargraph = {
-      diagnostics = false,
-    },
-  },
-  lua_ls = {
-    Lua = {
-      workspace = { checkThirdParty = false },
-      telemetry = { enable = false },
-      -- NOTE: toggle below to ignore Lua_LS's noisy `missing-fields` warnings
-      -- diagnostics = { disable = { 'missing-fields' } },
-    },
-  },
-}
-
 -- Setup neovim lua configuration
 require('neodev').setup()
 
@@ -158,18 +122,62 @@ capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
 local mason_lspconfig = require 'mason-lspconfig'
 
 mason_lspconfig.setup {
-  ensure_installed = vim.tbl_keys(servers),
+  ensure_installed = {'ruby_lsp', 'solargraph', 'lua_ls', 'tinymist', 'rubocop'},
 }
 
+local lspconfig = require('lspconfig')
+
+local default_handler = function(server)
+  -- See :help lspconfig-setup
+  lspconfig[server].setup({})
+end
+
 mason_lspconfig.setup_handlers {
-  function(server_name)
-    require('lspconfig')[server_name].setup {
+  default_handler,
+  ["lua_ls"] = function()
+    lspconfig.lua_ls.setup({
       capabilities = capabilities,
       on_attach = on_attach,
-      settings = servers[server_name],
-      filetypes = (servers[server_name] or {}).filetypes,
-    }
+      settings = {
+        Lua = {
+          workspace = { checkThirdParty = false },
+          telemetry = { enable = false },
+          -- NOTE: toggle below to ignore Lua_LS's noisy `missing-fields` warnings
+          -- diagnostics = { disable = { 'missing-fields' } },
+        },
+      }
+    })
   end,
+  ["ruby_lsp"] = function()
+    lspconfig.ruby_lsp.setup({
+      capabilities = capabilities,
+      on_attach = on_attach,
+      init_options = {
+        formatter = "auto",
+      }
+    })
+  end,
+  ["solargraph"] = function()
+    lspconfig.solargraph.setup({
+      capabilities = capabilities,
+      on_attach = on_attach,
+      init_options = {
+        formatting = false,
+      },
+      settings = {
+        solargraph = {
+          diagnostics = false,
+        }
+      }
+    })
+  end,
+  ["rubocop"] = function()
+    lspconfig.rubocop.setup({
+      capabilities = capabilities,
+      on_attach = on_attach,
+      cmd = { "bundle", "exec", "rubocop", "--lsp" }
+    })
+  end
 }
 
 -- vim: ts=2 sts=2 sw=2 et
