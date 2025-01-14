@@ -122,7 +122,7 @@ capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
 local mason_lspconfig = require 'mason-lspconfig'
 
 mason_lspconfig.setup {
-  ensure_installed = {'ruby_lsp', 'solargraph', 'lua_ls', 'tinymist', 'rubocop'},
+  ensure_installed = {'ruby_lsp', 'solargraph', 'lua_ls', 'tinymist'},
 }
 
 local lspconfig = require('lspconfig')
@@ -169,13 +169,6 @@ mason_lspconfig.setup_handlers {
           diagnostics = false,
         }
       }
-    })
-  end,
-  ["rubocop"] = function()
-    lspconfig.rubocop.setup({
-      capabilities = capabilities,
-      on_attach = on_attach,
-      cmd = { "bundle", "exec", "rubocop", "--lsp" }
     })
   end
 }
