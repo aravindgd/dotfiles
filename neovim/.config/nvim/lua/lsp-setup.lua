@@ -79,72 +79,42 @@ local on_attach = function(client, bufnr)
   end, { desc = 'Format current buffer with LSP' })
 end
 
-
--- mason-lspconfig requires that these setup functions are called in this order
--- before setting up the servers.
-require('mason').setup()
-require('mason-lspconfig').setup()
-
--- Setup neovim lua configuration
-require('neodev').setup()
-
--- nvim-cmp supports additional completion capabilities, so broadcast that to servers
-local capabilities = vim.lsp.protocol.make_client_capabilities()
-capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
-
--- Ensure the servers above are installed
-local mason_lspconfig = require 'mason-lspconfig'
-
-mason_lspconfig.setup {
-  ensure_installed = {'ruby_lsp', 'solargraph', 'lua_ls', 'tinymist'},
+require("mason").setup()
+require("mason-lspconfig").setup {
+  ensure_installed = {'tinymist', 'typos_lsp', 'svelte', 'tailwindcss', 'ruby_lsp', 'lua_ls'}
 }
 
-local lspconfig = require('lspconfig')
+local capabilities = require('cmp_nvim_lsp').default_capabilities()
 
-local default_handler = function(server)
-  -- See :help lspconfig-setup
-  lspconfig[server].setup({})
-end
+vim.lsp.config("*", {
+  on_attach = on_attach,
+  capabilities = capabilities,
+})
 
-mason_lspconfig.setup_handlers {
-  default_handler,
-  ["lua_ls"] = function()
-    lspconfig.lua_ls.setup({
-      capabilities = capabilities,
-      on_attach = on_attach,
-      settings = {
-        Lua = {
-          workspace = { checkThirdParty = false },
-          telemetry = { enable = false },
-          -- NOTE: toggle below to ignore Lua_LS's noisy `missing-fields` warnings
-          -- diagnostics = { disable = { 'missing-fields' } },
-        },
-      }
-    })
-  end,
-  ["ruby_lsp"] = function()
-    lspconfig.ruby_lsp.setup({
-      capabilities = capabilities,
-      on_attach = on_attach,
-      init_options = {
-        formatter = "auto",
-      }
-    })
-  end,
-  ["solargraph"] = function()
-    lspconfig.solargraph.setup({
-      capabilities = capabilities,
-      on_attach = on_attach,
-      init_options = {
-        formatting = false,
+vim.lsp.config('lua_ls', {
+  on_attach = on_attach,
+  settings = {
+    Lua = {
+      runtime = {
+        version = 'LuaJIT',
       },
-      settings = {
-        solargraph = {
-          diagnostics = false,
-        }
-      }
-    })
-  end
-}
+      diagnostics = {
+        globals = {
+          'vim',
+          'require',
+        },
+      },
+    },
+  }
+})
+
+vim.lsp.config('ruby_lsp', {
+  cmd = { vim.fn.expand("~/.rbenv/shims/ruby-lsp") },
+  on_attach = on_attach,
+  init_options = {
+    formatter = 'standard',
+    linters = { 'standard' },
+  }
+})
 
 -- vim: ts=2 sts=2 sw=2 et
