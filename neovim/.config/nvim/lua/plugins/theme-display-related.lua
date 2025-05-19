@@ -17,6 +17,7 @@ return {
     -- See `:help lualine.txt`
     opts = {
       options = {
+        sections = {lualine_a = {'mode', 'branch'}},
         icons_enabled = false,
         theme = 'onedark',
         component_separators = '|',
