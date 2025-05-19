@@ -73,6 +73,9 @@ require 'treesitter-setup'
 -- (Language Server Protocol)
 require 'lsp-setup'
 
+-- [[ Configure Which-Key ]]
+require 'which-key-setup'
+
 -- [[ Configure nvim-cmp ]]
 -- (completion)
 require 'cmp-setup'
