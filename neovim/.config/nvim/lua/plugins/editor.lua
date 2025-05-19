@@ -3,7 +3,7 @@ return {
   'tpope/vim-abolish',
 
   -- Vim bracket/parentheses wrapping
-  'tpope/vim-surround',
+  'machakann/vim-sandwich',
 
   -- "gc" to comment visual regions/lines
   { 'numToStr/Comment.nvim', opts = {} }
