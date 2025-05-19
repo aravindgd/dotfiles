@@ -57,7 +57,21 @@ cmp.setup {
     { name = 'copilot' },
     { name = 'luasnip' },
     { name = 'path' },
-  },
+    {
+      name = "spell",
+      option = {
+        keep_all_entries = false,
+        enable_in_context = function()
+          return require('cmp.config.context').in_treesitter_capture('spell')
+        end,
+        preselect_correct_word = true,
+      }
+    },
+    {
+      name = "lazydev",
+      group_index = 0, -- set group index to 0 to skip loading LuaLS completions
+    },
+  }
 }
 
 -- vim: ts=2 sts=2 sw=2 et

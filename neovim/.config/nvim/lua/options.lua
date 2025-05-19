@@ -54,7 +54,4 @@ vim.o.foldmethod = "expr"
 vim.o.foldexpr = "nvim_treesitter#foldexpr()"
 
 -- spell check
-vim.api.nvim_create_autocmd('FileType', {
-  pattern = {"gitcommit", "markdown"},
-  command = "setlocal spell"
-})
+vim.o.spell = true

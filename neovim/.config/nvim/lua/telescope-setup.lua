@@ -91,6 +91,8 @@ vim.keymap.set("n", "<leader>sgf", ":lua require('telescope').extensions.live_gr
 vim.keymap.set('n', '<leader>sg', require('telescope.builtin').live_grep, { desc = '[S]earch by [G]rep' })
 vim.keymap.set('n', '<leader>sG', ':LiveGrepGitRoot<cr>', { desc = '[S]earch by [G]rep on Git Root' })
 vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { desc = '[S]earch [D]iagnostics' })
+vim.keymap.set('n', '<leader>sq', require('telescope.builtin').quickfix, { desc = '[S]earch [Q]uickfix' })
+vim.keymap.set('n', '<leader>sl', require('telescope.builtin').spell_suggest, { desc = '[S]earch Spe[l]ling Suggestions' })
 vim.keymap.set('n', '<leader>sr', require('telescope.builtin').resume, { desc = '[S]earch [R]esume' })
 
 -- vim: ts=2 sts=2 sw=2 et

@@ -13,6 +13,8 @@ return {
     -- For suggestion from the same buffer
     "hrsh7th/cmp-buffer",
 
+    -- Add spellcheck to cmp
+    "f3fora/cmp-spell",
 
 		-- Adds a number of user-friendly snippets
 		'rafamadriz/friendly-snippets',
